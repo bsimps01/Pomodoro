@@ -14,4 +14,4 @@ There are six steps in the original technique:
  - After four pomodoros, take a longer break (15–30 minutes), reset your checkmark count to zero, then start from the beginning.
  
  ## Programming Language
-    Swifts
+    Swift with XCode

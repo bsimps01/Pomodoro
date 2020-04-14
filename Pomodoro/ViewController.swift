@@ -26,8 +26,8 @@ class ViewController: UIViewController {
     var currentInterval = 0
     
     // Setting the duration of each type of interval in seconds, for testing purposes they are short.
-    let pomodoroDuration = 10 // Real: 25 * 60
-    let breakDuration = 5 //Real:  5 * 60
+    let pomodoroDuration = 25 * 60 // Real: 25 * 60
+    let breakDuration = 5 * 60 //Real:  5 * 60
     
     var timeRemaining = 0
     
@@ -46,7 +46,9 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         //ACTION: Set button actions for startPauseButton, resetButton and closeButton
-       
+        startPauseButton.addTarget(self, action: #selector(startPauseButtonPressed), for: .touchUpInside)
+        resetButton.addTarget(self, action: #selector(resetButtonPressed), for: .touchUpInside)
+        closeButton.addTarget(self, action: #selector(closeButtonPressed), for: .touchUpInside)
 
         resetAll()
         
@@ -75,25 +77,31 @@ class ViewController: UIViewController {
         if timer.isValid {
          // Timer running
          // ACTION: Change the button’s title to “Continue”
+            startPauseButton.setTitle("Continue", for: .normal)
          // ACTION: Enable the reset button
+            resetButton.isEnabled = true
          // ACTION: Pause the timer, call the method pauseTimer
+            pauseTimer()
             
            
         } else {
          // Timer stopped or hasn't started
          // ACTION: Change the button’s title to “Pause”
+            startPauseButton.setTitle("Pause", for: .normal)
          // ACTION: Disable the Reset button
+            resetButton.isEnabled = false
             
            
             
             if currentInterval == 0 && timeRemaining == pomodoroDuration {
                 // We are at the start of a cycle
                 // ACTION: begin the cycle of intervals
+                startNextInterval()
                 
             } else {
                 // We are in the middle of a cycle
                 // ACTION: Resume the timer.
-                
+                startTimer()
             }
         }
     }
@@ -105,16 +113,21 @@ class ViewController: UIViewController {
         }
         
         //ACTION: call the reset method
+        resetAll()
         
     }
 
     //ACTION: add the method to dismiss the view controller
+    @objc func closeButtonPressed(_sender: UIButton) {
+        self.dismiss(animated: true, completion: nil)
+    }
     
     
     // MARK: Time Manipulation
     
     func startTimer() {
         //ACTION: create the timer, selector should be runTimer()
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(runTimer), userInfo: nil, repeats: true)
         
     }
     
@@ -164,6 +177,7 @@ class ViewController: UIViewController {
         } else {
             // If all intervals are complete, reset all.
             // ACTION: Post Notification
+            NotificationCenter.default.post(name: Notification.Name("receivedNotification"), object: self)
             resetAll()
         }
     }
